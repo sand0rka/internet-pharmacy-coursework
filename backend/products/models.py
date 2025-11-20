@@ -26,6 +26,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name="Категорія")
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, related_name='products',
                                      verbose_name="Виробник")
+    subscribers = models.ManyToManyField('users.Client', related_name='subscribed_products', blank=True,
+                                         verbose_name="Підписані клієнти")
 
     def __str__(self):
         return self.name
