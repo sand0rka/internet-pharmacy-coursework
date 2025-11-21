@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
+    'django_filters',
 
     'users',
     'products',
@@ -141,4 +142,8 @@ JAZZMIN_SETTINGS = {
     "site_header": "Вхід в систему",
     "welcome_sign": "Ласкаво просимо в Аптеку",
     "copyright": "Internet Pharmacy Coursework",
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
