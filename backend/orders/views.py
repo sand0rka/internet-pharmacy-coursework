@@ -1,16 +1,14 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
-from .models import Order, OrderItem
-from users.models import Client
-from products.models import Product
 from notifications.models import Pharmacy
-
-from .serializers import OrderSerializer, OrderItemSerializer
-
+from products.models import Product
+from users.models import Client
 from .builders import OrderBuilder
+from .models import Order, OrderItem
+from .serializers import OrderSerializer, OrderItemSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -23,7 +21,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             client_id = data.get('client')
             delivery_type = data.get('delivery_type', 'pickup')
             pharmacy_id = data.get('pharmacy')
-            items_data = data.get('items', [])  # Список товарів
+            address = data.get('delivery_address')
+            items_data = data.get('items', [])
 
             builder = OrderBuilder()
 
@@ -33,17 +32,16 @@ class OrderViewSet(viewsets.ModelViewSet):
             pharmacy = None
             if pharmacy_id:
                 pharmacy = Pharmacy.objects.get(pk=pharmacy_id)
-            builder.set_delivery(delivery_type, pharmacy)
+
+            builder.set_delivery(delivery_type, pharmacy, address)
 
             for item in items_data:
                 product_id = item.get('product')
                 quantity = int(item.get('quantity', 1))
-
                 product = get_object_or_404(Product, pk=product_id)
                 builder.add_item(product, quantity)
 
             order = builder.build()
-
             serializer = self.get_serializer(order)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

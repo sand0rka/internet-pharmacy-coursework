@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
+import '../models/pharmacy.dart';
+
 
 class ApiService {
   static const String baseUrl = 'http://127.0.0.1:8000/api';
@@ -34,10 +36,20 @@ class ApiService {
 
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
-      List<Product> products = body.map((dynamic item) => Product.fromJson(item)).toList();
-      return products;
+      return body.map((dynamic item) => Product.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load products');
+    }
+  }
+
+  Future<List<Pharmacy>> getPharmacies() async {
+    final response = await http.get(Uri.parse('$baseUrl/pharmacies/'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
+      return body.map((dynamic item) => Pharmacy.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load pharmacies');
     }
   }
 }

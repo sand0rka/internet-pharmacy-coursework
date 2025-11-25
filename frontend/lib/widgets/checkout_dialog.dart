@@ -1,0 +1,166 @@
+import 'package:flutter/material.dart';
+import '../constants.dart';
+import '../models/pharmacy.dart';
+import '../services/api_service.dart';
+import '../services/order_service.dart';
+
+class CheckoutDialog extends StatefulWidget {
+  const CheckoutDialog({super.key});
+
+  @override
+  State<CheckoutDialog> createState() => _CheckoutDialogState();
+}
+
+class _CheckoutDialogState extends State<CheckoutDialog> {
+  String deliveryType = 'courier';
+  Pharmacy? selectedPharmacy;
+  List<Pharmacy> pharmacies = [];
+  final TextEditingController addressController = TextEditingController();
+  bool isLoading = false;
+  bool isPharmaciesLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _loadPharmacies() async {
+    if (pharmacies.isNotEmpty) return;
+
+    setState(() => isPharmaciesLoading = true);
+    try {
+      final data = await ApiService().getPharmacies();
+      if (mounted) {
+        setState(() {
+          pharmacies = data;
+          if (pharmacies.isNotEmpty) selectedPharmacy = pharmacies[0];
+          isPharmaciesLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => isPharmaciesLoading = false);
+    }
+  }
+
+  void _submitOrder() async {
+    setState(() => isLoading = true);
+
+    final success = await OrderService().createOrder(
+      deliveryType: deliveryType,
+      pharmacyId: deliveryType == 'pickup' ? selectedPharmacy?.id : null,
+      deliveryAddress: deliveryType == 'courier' ? addressController.text : null,
+    );
+
+    if (mounted) {
+      Navigator.pop(context, success);
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Замовлення успішно створено!"),
+            backgroundColor: kPrimaryColor,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Помилка створення замовлення"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text("Оформлення замовлення"),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Спосіб доставки:", style: TextStyle(fontWeight: FontWeight.bold)),
+            RadioListTile<String>(
+              title: const Text("Кур'єр"),
+              value: 'courier',
+              groupValue: deliveryType,
+              activeColor: kPrimaryColor,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (value) => setState(() => deliveryType = value!),
+            ),
+            RadioListTile<String>(
+              title: const Text("Самовивіз з аптеки"),
+              value: 'pickup',
+              groupValue: deliveryType,
+              activeColor: kPrimaryColor,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (value) {
+                setState(() => deliveryType = value!);
+                if (value == 'pickup') _loadPharmacies();
+              },
+            ),
+
+            if (deliveryType == 'courier') ...[
+              const SizedBox(height: 10),
+              TextField(
+                controller: addressController,
+                decoration: InputDecoration(
+                  labelText: "Адреса доставки",
+                  hintText: "вул. Шевченка, 1, кв. 5",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  isDense: true,
+                ),
+              ),
+            ],
+
+            if (deliveryType == 'pickup') ...[
+              const SizedBox(height: 10),
+              const Text("Оберіть аптеку:", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              if (isPharmaciesLoading)
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(color: kPrimaryColor),
+                )
+              else
+                DropdownButtonFormField<Pharmacy>(
+                  value: selectedPharmacy,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  ),
+                  items: pharmacies.map((p) {
+                    return DropdownMenuItem(
+                      value: p,
+                      child: Text(p.address, overflow: TextOverflow.ellipsis),
+                    );
+                  }).toList(),
+                  onChanged: (val) => setState(() => selectedPharmacy = val),
+                ),
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text("Відміна", style: TextStyle(color: Colors.grey)),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: kPrimaryColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          onPressed: isLoading ? null : _submitOrder,
+          child: isLoading
+              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+              : const Text("Підтвердити", style: TextStyle(color: Colors.white)),
+        ),
+      ],
+    );
+  }
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../services/cart_service.dart';
+import '../widgets/checkout_dialog.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -20,6 +21,18 @@ class _CartScreenState extends State<CartScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: kTextColor),
+        actions: [
+          if (cartService.items.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.delete_sweep_outlined, color: Colors.red),
+              onPressed: () {
+                setState(() {
+                  cartService.clear();
+                });
+              },
+              tooltip: "Очистити кошик",
+            )
+        ],
       ),
       body: cartService.items.isEmpty
           ? Center(
@@ -28,7 +41,7 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             Icon(Icons.shopping_basket_outlined, size: 100, color: kPrimaryColor.withOpacity(0.2)),
             const SizedBox(height: 20),
-            const Text("Кошик порожній", style: TextStyle(fontSize: 18, color: kTextLightColor)),
+            const Text("Кошик порожній 😔", style: TextStyle(fontSize: 18, color: kTextLightColor)),
           ],
         ),
       )
@@ -47,21 +60,71 @@ class _CartScreenState extends State<CartScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [kDefaultShadow],
                   ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: kSecondaryColor.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(Icons.medication_liquid, color: kPrimaryColor),
-                    ),
-                    title: Text(item.product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text("${item.quantity} шт. x ${item.product.price} ₴"),
-                    trailing: Text(
-                      "${(double.parse(item.product.price) * item.quantity).toStringAsFixed(2)} ₴",
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: kPrimaryColor, fontSize: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: kSecondaryColor.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.medication_liquid, color: kPrimaryColor),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(item.product.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              const SizedBox(height: 4),
+                              Text("${item.product.price} ₴", style: const TextStyle(color: kTextLightColor)),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove, size: 18, color: kTextColor),
+                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  setState(() {
+                                    cartService.removeOne(item.product);
+                                  });
+                                },
+                              ),
+                              Text("${item.quantity}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                              IconButton(
+                                icon: const Icon(Icons.add, size: 18, color: kPrimaryColor),
+                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  setState(() {
+                                    cartService.addToCart(item.product);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                          onPressed: () {
+                            setState(() {
+                              cartService.removeItem(item.product);
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -104,7 +167,14 @@ class _CartScreenState extends State<CartScreen> {
                       onPressed: cartService.items.isEmpty
                           ? null
                           : () {
-                        _showCheckoutDialog(context);
+                        showDialog(
+                          context: context,
+                          builder: (context) => const CheckoutDialog(),
+                        ).then((result) {
+                          if (result == true) {
+                            setState(() {});
+                          }
+                        });
                       },
                       child: const Text("Оформити замовлення", style: TextStyle(fontSize: 18, color: Colors.white)),
                     ),
@@ -114,17 +184,6 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showCheckoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Замовлення"),
-        content: const Text("Скоро тут буде форма оформлення!"),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("ОК"))],
       ),
     );
   }

@@ -5,21 +5,23 @@ from .models import Order, OrderItem
 
 
 class OrderBuilder:
-
     def __init__(self):
         self._client = None
         self._pharmacy = None
         self._delivery_type = 'pickup'
+        self._address = None
         self._items = []
 
     def set_client(self, client):
         self._client = client
         return self
 
-    def set_delivery(self, delivery_type, pharmacy=None):
+    def set_delivery(self, delivery_type, pharmacy=None, address=None):
         self._delivery_type = delivery_type
         if delivery_type == 'pickup':
             self._pharmacy = pharmacy
+        else:
+            self._address = address
         return self
 
     def add_item(self, product, quantity=1):
@@ -36,7 +38,6 @@ class OrderBuilder:
     def build(self):
         if not self._client:
             raise ValidationError("Клієнт обов'язковий для замовлення!")
-
         if not self._items:
             raise ValidationError("Замовлення не може бути пустим!")
 
@@ -45,6 +46,7 @@ class OrderBuilder:
                 client=self._client,
                 delivery_type=self._delivery_type,
                 pharmacy=self._pharmacy,
+                delivery_address=self._address,
                 status='new',
                 total_amount=0
             )
