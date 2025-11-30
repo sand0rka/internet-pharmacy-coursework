@@ -13,7 +13,8 @@ class HeroBanner extends StatelessWidget {
         color: kPrimaryColor,
         borderRadius: BorderRadius.circular(24),
         image: const DecorationImage(
-          image: NetworkImage("https://img.freepik.com/free-vector/medical-healthcare-blue-color_1017-26797.jpg?w=1380"),
+          image: NetworkImage(
+              "https://img.freepik.com/free-vector/medical-healthcare-blue-color_1017-26797.jpg?w=1380"),
           fit: BoxFit.cover,
           opacity: 0.1,
         ),
@@ -23,7 +24,9 @@ class HeroBanner extends StatelessWidget {
         children: [
           Text(
             "Ваша онлайн аптека",
-            style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white70,
+                fontSize: 14,
+                fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
           Text(
@@ -38,7 +41,8 @@ class HeroBanner extends StatelessWidget {
           SizedBox(height: 20),
           Chip(
             backgroundColor: kAccentColor,
-            label: Text("Знижки до -15% для Premium", style: TextStyle(fontWeight: FontWeight.bold)),
+            label: Text("Знижки до -15% для Premium",
+                style: TextStyle(fontWeight: FontWeight.bold)),
           )
         ],
       ),

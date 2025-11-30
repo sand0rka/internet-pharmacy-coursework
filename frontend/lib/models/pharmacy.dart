@@ -3,7 +3,8 @@ class Pharmacy {
   final String address;
   final String workingHours;
 
-  Pharmacy({required this.id, required this.address, required this.workingHours});
+  Pharmacy(
+      {required this.id, required this.address, required this.workingHours});
 
   factory Pharmacy.fromJson(Map<String, dynamic> json) {
     return Pharmacy(

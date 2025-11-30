@@ -24,7 +24,8 @@ class _CartScreenState extends State<CartScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ваш Кошик", style: TextStyle(color: kTextColor, fontWeight: FontWeight.bold)),
+        title: const Text("Ваш Кошик",
+            style: TextStyle(color: kTextColor, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: kTextColor),
@@ -46,9 +47,11 @@ class _CartScreenState extends State<CartScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.shopping_basket_outlined, size: 100, color: kPrimaryColor.withOpacity(0.2)),
+            Icon(Icons.shopping_basket_outlined, size: 100,
+                color: kPrimaryColor.withOpacity(0.2)),
             const SizedBox(height: 20),
-            const Text("Кошик порожній 😔", style: TextStyle(fontSize: 18, color: kTextLightColor)),
+            const Text("Кошик порожній 😔",
+                style: TextStyle(fontSize: 18, color: kTextLightColor)),
           ],
         ),
       )
@@ -78,16 +81,20 @@ class _CartScreenState extends State<CartScreen> {
                             color: kSecondaryColor.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.medication_liquid, color: kPrimaryColor),
+                          child: const Icon(
+                              Icons.medication_liquid, color: kPrimaryColor),
                         ),
                         const SizedBox(width: 15),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(item.product.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Text(item.product.name, style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                               const SizedBox(height: 4),
-                              Text("${item.product.price} ₴", style: const TextStyle(color: kTextLightColor)),
+                              Text("${item.product.price} ₴",
+                                  style: const TextStyle(
+                                      color: kTextLightColor)),
                             ],
                           ),
                         ),
@@ -99,8 +106,10 @@ class _CartScreenState extends State<CartScreen> {
                           child: Row(
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.remove, size: 18, color: kTextColor),
-                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                icon: const Icon(
+                                    Icons.remove, size: 18, color: kTextColor),
+                                constraints: const BoxConstraints(
+                                    minWidth: 36, minHeight: 36),
                                 padding: EdgeInsets.zero,
                                 onPressed: () {
                                   setState(() {
@@ -108,10 +117,13 @@ class _CartScreenState extends State<CartScreen> {
                                   });
                                 },
                               ),
-                              Text("${item.quantity}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text("${item.quantity}", style: const TextStyle(
+                                  fontWeight: FontWeight.bold)),
                               IconButton(
-                                icon: const Icon(Icons.add, size: 18, color: kPrimaryColor),
-                                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                icon: const Icon(
+                                    Icons.add, size: 18, color: kPrimaryColor),
+                                constraints: const BoxConstraints(
+                                    minWidth: 36, minHeight: 36),
                                 padding: EdgeInsets.zero,
                                 onPressed: () {
                                   setState(() {
@@ -124,7 +136,8 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         const SizedBox(width: 10),
                         IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                          icon: const Icon(
+                              Icons.delete_outline, color: Colors.red),
                           onPressed: () {
                             setState(() {
                               cartService.removeItem(item.product);
@@ -143,9 +156,12 @@ class _CartScreenState extends State<CartScreen> {
             padding: const EdgeInsets.all(kDefaultPadding),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24)),
               boxShadow: [
-                BoxShadow(offset: const Offset(0, -10), blurRadius: 20, color: Colors.black.withOpacity(0.05)),
+                BoxShadow(offset: const Offset(0, -10),
+                    blurRadius: 20,
+                    color: Colors.black.withOpacity(0.05)),
               ],
             ),
             child: SafeArea(
@@ -156,16 +172,23 @@ class _CartScreenState extends State<CartScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("Сума:", style: TextStyle(color: kTextLightColor)),
-                        Text("${total.toStringAsFixed(2)} ₴", style: const TextStyle(decoration: TextDecoration.lineThrough, color: Colors.grey)),
+                        const Text("Сума:", style: TextStyle(
+                            color: kTextLightColor)),
+                        Text("${total.toStringAsFixed(2)} ₴",
+                            style: const TextStyle(decoration: TextDecoration
+                                .lineThrough, color: Colors.grey)),
                       ],
                     ),
                     const SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Ваша знижка (${(discountPercent * 100).toInt()}%):", style: const TextStyle(color: kPrimaryColor)),
-                        Text("-${discountAmount.toStringAsFixed(2)} ₴", style: const TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold)),
+                        Text("Ваша знижка (${(discountPercent * 100)
+                            .toInt()}%):", style: const TextStyle(
+                            color: kPrimaryColor)),
+                        Text("-${discountAmount.toStringAsFixed(2)} ₴",
+                            style: const TextStyle(color: kPrimaryColor,
+                                fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const Divider(height: 20),
@@ -174,10 +197,13 @@ class _CartScreenState extends State<CartScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("До сплати:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text("До сплати:", style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
                       Text(
                         "${finalPrice.toStringAsFixed(2)} ₴",
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: kTextColor),
+                        style: const TextStyle(fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            color: kTextColor),
                       ),
                     ],
                   ),
@@ -189,7 +215,8 @@ class _CartScreenState extends State<CartScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimaryColor,
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius
+                            .circular(16)),
                       ),
                       onPressed: cartService.items.isEmpty
                           ? null
@@ -203,7 +230,8 @@ class _CartScreenState extends State<CartScreen> {
                           }
                         });
                       },
-                      child: const Text("Оформити замовлення", style: TextStyle(fontSize: 18, color: Colors.white)),
+                      child: const Text("Оформити замовлення",
+                          style: TextStyle(fontSize: 18, color: Colors.white)),
                     ),
                   ),
                 ],

@@ -30,11 +30,15 @@ class CurrentUser {
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
+
   factory AuthService() => _instance;
+
   AuthService._internal();
 
   CurrentUser? _currentUser;
+
   CurrentUser? get currentUser => _currentUser;
+
   bool get isLoggedIn => _currentUser != null;
 
   double get currentDiscountPercent {
@@ -55,7 +59,8 @@ class AuthService {
 
     try {
       // Робимо запит на отримання деталей поточного юзера
-      final url = Uri.parse('${ApiService.baseUrl}/clients/${_currentUser!.id}/');
+      final url = Uri.parse(
+          '${ApiService.baseUrl}/clients/${_currentUser!.id}/');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -92,7 +97,8 @@ class AuthService {
     }
   }
 
-  Future<bool> register(String name, String email, String phone, String password) async {
+  Future<bool> register(String name, String email, String phone,
+      String password) async {
     try {
       final url = Uri.parse('${ApiService.baseUrl}/clients/register/');
 

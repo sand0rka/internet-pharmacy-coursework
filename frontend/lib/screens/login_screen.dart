@@ -38,7 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Невірний email або пароль"), backgroundColor: Colors.red),
+        const SnackBar(content: Text("Невірний email або пароль"),
+            backgroundColor: Colors.red),
       );
     }
 
@@ -58,8 +59,11 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const Icon(Icons.local_pharmacy, size: 80, color: kPrimaryColor),
               const SizedBox(height: 20),
-              const Text("ЕкоАптека", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: kTextColor)),
-              const Text("Вхід у систему", style: TextStyle(fontSize: 16, color: kTextLightColor)),
+              const Text("ЕкоАптека", style: TextStyle(fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  color: kTextColor)),
+              const Text("Вхід у систему",
+                  style: TextStyle(fontSize: 16, color: kTextLightColor)),
               const SizedBox(height: 40),
 
               TextField(
@@ -67,7 +71,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: InputDecoration(
                   labelText: "E-mail",
                   hintText: "user@example.com",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   prefixIcon: const Icon(Icons.email_outlined),
                 ),
               ),
@@ -78,7 +83,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: "Пароль",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   prefixIcon: const Icon(Icons.lock_outline),
                 ),
               ),
@@ -91,11 +97,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimaryColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Увійти", style: TextStyle(fontSize: 18, color: Colors.white)),
+                      : const Text("Увійти",
+                      style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
               ),
 
@@ -109,10 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                        MaterialPageRoute(
+                            builder: (_) => const RegisterScreen()),
                       );
                     },
-                    child: const Text("Зареєструватися", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold)),
+                    child: const Text("Зареєструватися", style: TextStyle(
+                        color: kPrimaryColor, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),

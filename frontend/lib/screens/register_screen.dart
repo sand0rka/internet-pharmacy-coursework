@@ -22,7 +22,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _emailController.text.isEmpty ||
         _phoneController.text.isEmpty ||
         _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Заповніть всі поля")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Заповніть всі поля")));
       return;
     }
 
@@ -43,7 +44,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Помилка реєстрації (можливо, email зайнятий)"), backgroundColor: Colors.red),
+        const SnackBar(
+            content: Text("Помилка реєстрації (можливо, email зайнятий)"),
+            backgroundColor: Colors.red),
       );
     }
 
@@ -66,7 +69,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const Text("Створити акаунт", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: kTextColor)),
+                const Text("Створити акаунт", style: TextStyle(fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: kTextColor)),
                 const SizedBox(height: 30),
 
                 _buildTextField("ПІБ", _nameController, Icons.person),
@@ -75,7 +80,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 15),
                 _buildTextField("Телефон", _phoneController, Icons.phone),
                 const SizedBox(height: 15),
-                _buildTextField("Пароль", _passwordController, Icons.lock, obscure: true),
+                _buildTextField(
+                    "Пароль", _passwordController, Icons.lock, obscure: true),
 
                 const SizedBox(height: 30),
 
@@ -86,11 +92,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: _isLoading ? null : _register,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: kPrimaryColor,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Зареєструватися", style: TextStyle(fontSize: 18, color: Colors.white)),
+                        : const Text("Зареєструватися",
+                        style: TextStyle(fontSize: 18, color: Colors.white)),
                   ),
                 ),
               ],
@@ -101,7 +109,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, IconData icon, {bool obscure = false}) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      IconData icon, {bool obscure = false}) {
     return TextField(
       controller: controller,
       obscureText: obscure,

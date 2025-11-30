@@ -22,7 +22,8 @@ class ProductCard extends StatelessWidget {
           children: [
             const Icon(Icons.check_circle, color: Colors.white),
             const SizedBox(width: 10),
-            Expanded(child: Text("${product.name} додано!", style: const TextStyle(fontWeight: FontWeight.bold))),
+            Expanded(child: Text("${product.name} додано!",
+                style: const TextStyle(fontWeight: FontWeight.bold))),
           ],
         ),
         backgroundColor: kPrimaryColor,
@@ -59,7 +60,8 @@ class ProductCard extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: kSecondaryColor.withOpacity(0.3),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16)),
                 ),
                 child: Stack(
                   children: [
@@ -78,14 +80,17 @@ class ProductCard extends StatelessWidget {
                         top: 8,
                         right: 8,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: kAccentColor,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Text(
                             "Soc %",
-                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+                            style: TextStyle(fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
                           ),
                         ),
                       ),
@@ -101,14 +106,17 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Text(
                     (product.categoryName ?? "Загальне").toUpperCase(),
-                    style: const TextStyle(fontSize: 10, color: kTextLightColor),
+                    style: const TextStyle(
+                        fontSize: 10, color: kTextLightColor),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     product.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: kTextColor),
+                    style: const TextStyle(fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: kTextColor),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -118,7 +126,9 @@ class ProductCard extends StatelessWidget {
                     children: [
                       Text(
                         '${product.price} ₴',
-                        style: const TextStyle(color: kPrimaryColor, fontWeight: FontWeight.w800, fontSize: 18),
+                        style: const TextStyle(color: kPrimaryColor,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 18),
                       ),
                       InkWell(
                         onTap: () => _addToCart(context),
@@ -128,7 +138,8 @@ class ProductCard extends StatelessWidget {
                             color: kPrimaryColor,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.add, color: Colors.white, size: 22),
+                          child: const Icon(Icons.add, color: Colors.white,
+                              size: 22),
                         ),
                       )
                     ],
