@@ -1,26 +1,47 @@
 from abc import ABC, abstractmethod
 from decimal import Decimal
 
+
 class IDiscountStrategy(ABC):
     @abstractmethod
-    def calculate_discount(self, amount: Decimal) -> Decimal:
+    def calculate_discount(self, items) -> Decimal:
         pass
 
 
 class NoDiscountStrategy(IDiscountStrategy):
-    """Звичайний клієнт: знижка 0 грн"""
-    def calculate_discount(self, amount: Decimal) -> Decimal:
+    def calculate_discount(self, items) -> Decimal:
         return Decimal('0.00')
 
+
 class SocialDiscountStrategy(IDiscountStrategy):
-    """Соціальний: знижка 5%"""
-    def calculate_discount(self, amount: Decimal) -> Decimal:
-        return amount * Decimal('0.05')
+    def calculate_discount(self, items) -> Decimal:
+        discount = Decimal('0.00')
+        for item in items:
+            if hasattr(item, 'product'):
+                product = item.product
+                price = item.price_per_unit
+                qty = item.quantity
+            else:
+                product = item['product']
+                price = item['price']
+                qty = item['quantity']
+
+            if product.is_social_program:
+                discount += (price * qty) * Decimal('0.20')
+
+        return discount
+
 
 class PremiumDiscountStrategy(IDiscountStrategy):
-    """Преміум: знижка 15%"""
-    def calculate_discount(self, amount: Decimal) -> Decimal:
-        return amount * Decimal('0.15')
+    def calculate_discount(self, items) -> Decimal:
+        total = Decimal('0.00')
+        for item in items:
+            if hasattr(item, 'product'):
+                total += item.price_per_unit * item.quantity
+            else:
+                total += item['price'] * item['quantity']
+
+        return total * Decimal('0.15')
 
 
 class DiscountCalculator:
@@ -34,7 +55,15 @@ class DiscountCalculator:
             return NoDiscountStrategy()
 
     @staticmethod
-    def calculate_final_price(amount: Decimal, client_type_name: str) -> Decimal:
+    def calculate_final_price(items, client_type_name: str) -> Decimal:
         strategy = DiscountCalculator.get_strategy(client_type_name)
-        discount = strategy.calculate_discount(amount)
-        return amount - discount
+
+        total = Decimal('0.00')
+        for item in items:
+            if hasattr(item, 'product'):
+                total += item.price_per_unit * item.quantity
+            else:
+                total += item['price'] * item['quantity']
+
+        discount = strategy.calculate_discount(items)
+        return total - discount

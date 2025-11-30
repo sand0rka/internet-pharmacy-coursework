@@ -22,6 +22,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Ціна")
     stock_quantity = models.IntegerField(default=0, verbose_name="Кількість на складі")
     is_prescription = models.BooleanField(default=False, verbose_name="За рецептом")
+    is_social_program = models.BooleanField(default=False, verbose_name="Соціальна програма")
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name="Категорія")
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, related_name='products',

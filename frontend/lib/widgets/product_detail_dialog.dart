@@ -10,19 +10,24 @@ class ProductDetailDialog extends StatelessWidget {
 
   void _addToCart(BuildContext context) {
     CartService().addToCart(product);
-    Navigator.pop(context);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("${product.name} додано в кошик!"),
         backgroundColor: kPrimaryColor,
         duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+        width: 300,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isWideScreen = MediaQuery.of(context).size.width > 600;
+    final isWideScreen = MediaQuery
+        .of(context)
+        .size
+        .width > 600;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -82,7 +87,8 @@ class ProductDetailDialog extends StatelessWidget {
             children: [
               if (product.isPrescription)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: Colors.red[50],
                     borderRadius: BorderRadius.circular(8),
@@ -90,9 +96,13 @@ class ProductDetailDialog extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.warning_amber_rounded, size: 16, color: Colors.red[700]),
+                      Icon(Icons.warning_amber_rounded, size: 16,
+                          color: Colors.red[700]),
                       const SizedBox(width: 5),
-                      Text("За рецептом", style: TextStyle(color: Colors.red[700], fontSize: 12, fontWeight: FontWeight.bold)),
+                      Text("За рецептом", style: TextStyle(
+                          color: Colors.red[700],
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold)),
                     ],
                   ),
                 )
@@ -107,10 +117,14 @@ class ProductDetailDialog extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          Text(product.categoryName ?? "Загальне", style: const TextStyle(color: kTextLightColor, fontSize: 12)),
-          Text(product.name, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: kTextColor)),
+          Text(product.categoryName ?? "Загальне",
+              style: const TextStyle(color: kTextLightColor, fontSize: 12)),
+          Text(product.name, style: const TextStyle(
+              fontSize: 28, fontWeight: FontWeight.bold, color: kTextColor)),
           if (product.manufacturerName != null)
-            Text("Виробник: ${product.manufacturerName}", style: const TextStyle(color: kPrimaryColor, fontWeight: FontWeight.w500)),
+            Text("Виробник: ${product.manufacturerName}",
+                style: const TextStyle(
+                    color: kPrimaryColor, fontWeight: FontWeight.w500)),
 
           const SizedBox(height: 20),
 
@@ -118,7 +132,8 @@ class ProductDetailDialog extends StatelessWidget {
             child: SingleChildScrollView(
               child: Text(
                 product.description,
-                style: const TextStyle(fontSize: 15, color: kTextColor, height: 1.5),
+                style: const TextStyle(
+                    fontSize: 15, color: kTextColor, height: 1.5),
               ),
             ),
           ),
@@ -132,21 +147,31 @@ class ProductDetailDialog extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Ціна за шт.", style: TextStyle(color: kTextLightColor, fontSize: 12)),
-                  Text("${product.price} ₴", style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: kPrimaryColor)),
+                  const Text("Ціна за шт.",
+                      style: TextStyle(color: kTextLightColor, fontSize: 12)),
+                  Text("${product.price} ₴", style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      color: kPrimaryColor)),
                 ],
               ),
               const Spacer(),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kPrimaryColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30, vertical: 18),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
-                onPressed: product.stockQuantity > 0 ? () => _addToCart(context) : null,
+                onPressed: product.stockQuantity > 0
+                    ? () => _addToCart(context)
+                    : null,
                 child: Text(
                   product.stockQuantity > 0 ? "У кошик" : "Немає",
-                  style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],

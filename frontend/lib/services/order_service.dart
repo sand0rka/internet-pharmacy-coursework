@@ -5,7 +5,7 @@ import 'auth_service.dart';
 import 'cart_service.dart';
 
 class OrderService {
-  Future<bool> createOrder({
+  Future<String?> createOrder({
     required String deliveryType,
     int? pharmacyId,
     String? deliveryAddress,
@@ -13,7 +13,8 @@ class OrderService {
     final user = AuthService().currentUser;
     final cartItems = CartService().items;
 
-    if (user == null || cartItems.isEmpty) return false;
+    if (user == null) return "Користувач не авторизований";
+    if (cartItems.isEmpty) return "Кошик порожній";
 
     List<Map<String, dynamic>> itemsJson = cartItems.map((item) {
       return {
@@ -44,12 +45,21 @@ class OrderService {
 
       if (response.statusCode == 201) {
         CartService().clear();
-        return true;
+        return null;
       } else {
-        return false;
+        try {
+          final body = jsonDecode(utf8.decode(response.bodyBytes));
+          if (body is Map && body.containsKey('error')) {
+            String errorMsg = body['error'].toString();
+            return errorMsg.replaceAll(RegExp(r"[\[\]']"), "");
+          }
+          return "Помилка сервера: ${response.statusCode}";
+        } catch (_) {
+          return "Не вдалося оформити замовлення";
+        }
       }
     } catch (e) {
-      return false;
+      return "Помилка з'єднання: $e";
     }
   }
 }

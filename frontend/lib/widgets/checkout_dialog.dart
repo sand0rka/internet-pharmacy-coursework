@@ -3,6 +3,7 @@ import '../constants.dart';
 import '../models/pharmacy.dart';
 import '../services/api_service.dart';
 import '../services/order_service.dart';
+import '../services/auth_service.dart';
 
 class CheckoutDialog extends StatefulWidget {
   const CheckoutDialog({super.key});
@@ -45,16 +46,22 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
   void _submitOrder() async {
     setState(() => isLoading = true);
 
-    final success = await OrderService().createOrder(
+    final errorMessage = await OrderService().createOrder(
       deliveryType: deliveryType,
       pharmacyId: deliveryType == 'pickup' ? selectedPharmacy?.id : null,
-      deliveryAddress: deliveryType == 'courier' ? addressController.text : null,
+      deliveryAddress: deliveryType == 'courier'
+          ? addressController.text
+          : null,
     );
 
-    if (mounted) {
-      Navigator.pop(context, success);
+    if (errorMessage == null) {
+      await AuthService().refreshUser();
+    }
 
-      if (success) {
+    if (mounted) {
+      Navigator.pop(context, errorMessage == null);
+
+      if (errorMessage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Замовлення успішно створено!"),
@@ -63,9 +70,17 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Помилка створення замовлення"),
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 10),
+                Expanded(child: Text(errorMessage)),
+              ],
+            ),
             backgroundColor: Colors.red,
+            duration: const Duration(
+                seconds: 4),
           ),
         );
       }
@@ -82,7 +97,8 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Спосіб доставки:", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text("Спосіб доставки:",
+                style: TextStyle(fontWeight: FontWeight.bold)),
             RadioListTile<String>(
               title: const Text("Кур'єр"),
               value: 'courier',
@@ -110,7 +126,8 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
                 decoration: InputDecoration(
                   labelText: "Адреса доставки",
                   hintText: "вул. Шевченка, 1, кв. 5",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   isDense: true,
                 ),
               ),
@@ -118,7 +135,8 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
 
             if (deliveryType == 'pickup') ...[
               const SizedBox(height: 10),
-              const Text("Оберіть аптеку:", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text("Оберіть аптеку:",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
               if (isPharmaciesLoading)
                 const Padding(
@@ -130,8 +148,10 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
                   value: selectedPharmacy,
                   isExpanded: true,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
                   ),
                   items: pharmacies.map((p) {
                     return DropdownMenuItem(
@@ -153,12 +173,17 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: kPrimaryColor,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8)),
           ),
           onPressed: isLoading ? null : _submitOrder,
           child: isLoading
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : const Text("Підтвердити", style: TextStyle(color: Colors.white)),
+              ? const SizedBox(width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                  color: Colors.white, strokeWidth: 2))
+              : const Text(
+              "Підтвердити", style: TextStyle(color: Colors.white)),
         ),
       ],
     );

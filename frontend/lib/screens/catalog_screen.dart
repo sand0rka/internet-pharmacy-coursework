@@ -18,7 +18,7 @@ class _CatalogTabState extends State<CatalogTab> {
   final ApiService apiService = ApiService();
 
   String _searchQuery = "";
-  bool _onlyPrescription = false;
+  bool _onlyNonPrescription = false; // Змінили логіку тут
   bool _onlyInStock = false;
   double? _minPrice;
   double? _maxPrice;
@@ -80,7 +80,8 @@ class _CatalogTabState extends State<CatalogTab> {
                       hintText: "Пошук ліків...",
                       prefixIcon: Icon(Icons.search, color: kPrimaryColor),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 15),
                     ),
                   ),
                 ),
@@ -89,28 +90,39 @@ class _CatalogTabState extends State<CatalogTab> {
               const SizedBox(width: 15),
 
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 15, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)],
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.05), blurRadius: 5)
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     FilterChip(
-                      label: const Text("За рецептом"),
-                      selected: _onlyPrescription,
-                      onSelected: (val) => setState(() => _onlyPrescription = val),
-                      selectedColor: Colors.red[50],
-                      checkmarkColor: Colors.red,
+                      label: const Text("Без рецепта"),
+                      selected: _onlyNonPrescription,
+                      onSelected: (val) =>
+                          setState(() => _onlyNonPrescription = val),
+                      selectedColor: kSecondaryColor,
+                      checkmarkColor: kPrimaryColor,
                       labelStyle: TextStyle(
-                        color: _onlyPrescription ? Colors.red : kTextColor,
+                        color: _onlyNonPrescription
+                            ? kPrimaryColor
+                            : kTextColor,
                         fontSize: 12,
+                        fontWeight: _onlyNonPrescription
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                       backgroundColor: Colors.transparent,
                       side: BorderSide.none,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
                     ),
                     const SizedBox(width: 5),
                     Container(width: 1, height: 20, color: Colors.grey[300]),
@@ -127,7 +139,8 @@ class _CatalogTabState extends State<CatalogTab> {
                       ),
                       backgroundColor: Colors.transparent,
                       side: BorderSide.none,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
                     ),
                   ],
                 ),
@@ -136,15 +149,20 @@ class _CatalogTabState extends State<CatalogTab> {
               const SizedBox(width: 15),
 
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 15, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)],
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.05), blurRadius: 5)
+                  ],
                 ),
                 child: Row(
                   children: [
-                    const Text("Ціна:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    const Text("Ціна:", style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 12)),
                     const SizedBox(width: 8),
                     SizedBox(
                       width: 60,
@@ -180,7 +198,8 @@ class _CatalogTabState extends State<CatalogTab> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.check_circle, color: kPrimaryColor, size: 20),
+                      icon: const Icon(
+                          Icons.check_circle, color: kPrimaryColor, size: 20),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: _applyPriceFilter,
@@ -196,14 +215,15 @@ class _CatalogTabState extends State<CatalogTab> {
           child: FutureBuilder<List<Product>>(
             future: apiService.getProducts(
               searchQuery: _searchQuery,
-              isPrescription: _onlyPrescription ? true : null,
+              isPrescription: _onlyNonPrescription ? false : null,
               inStock: _onlyInStock ? true : null,
               minPrice: _minPrice,
               maxPrice: _maxPrice,
             ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
+                return const Center(
+                    child: CircularProgressIndicator(color: kPrimaryColor));
               } else if (snapshot.hasError) {
                 return Center(child: Text("Помилка: ${snapshot.error}"));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -213,14 +233,16 @@ class _CatalogTabState extends State<CatalogTab> {
                     children: [
                       Icon(Icons.search_off, size: 60, color: kTextLightColor),
                       SizedBox(height: 10),
-                      Text("Товарів не знайдено", style: TextStyle(color: kTextLightColor)),
+                      Text("Товарів не знайдено",
+                          style: TextStyle(color: kTextLightColor)),
                     ],
                   ),
                 );
               }
 
               return GridView.builder(
-                padding: const EdgeInsets.fromLTRB(kDefaultPadding, 0, kDefaultPadding, kDefaultPadding),
+                padding: const EdgeInsets.fromLTRB(
+                    kDefaultPadding, 0, kDefaultPadding, kDefaultPadding),
                 itemCount: snapshot.data!.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 5,

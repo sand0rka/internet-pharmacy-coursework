@@ -12,8 +12,9 @@ from .serializers import OrderSerializer, OrderItemSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-id')
     serializer_class = OrderSerializer
+    filterset_fields = ['client']
 
     def create(self, request, *args, **kwargs):
         try:

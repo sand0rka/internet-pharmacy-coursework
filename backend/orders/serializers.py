@@ -23,8 +23,13 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_final_price_with_discount(self, obj):
-        total = obj.total_amount
+        items = obj.items.all()
 
+        client_type_name = "Standard"
+        if obj.client and obj.client.client_type:
+            client_type_name = obj.client.client_type.name
+
+        return DiscountCalculator.calculate_final_price(items, client_type_name)
         client_type_name = "Standard"
         if obj.client and obj.client.client_type:
             client_type_name = obj.client.client_type.name

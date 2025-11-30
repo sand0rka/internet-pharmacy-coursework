@@ -7,6 +7,7 @@ class Product {
   final String? manufacturerName;
   final int stockQuantity;
   final bool isPrescription;
+  final bool isSocialProgram;
 
   Product({
     required this.id,
@@ -17,6 +18,7 @@ class Product {
     this.manufacturerName,
     required this.stockQuantity,
     required this.isPrescription,
+    required this.isSocialProgram,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class Product {
       manufacturerName: json['manufacturer_name'],
       stockQuantity: json['stock_quantity'] ?? 0,
       isPrescription: json['is_prescription'] ?? false,
+      isSocialProgram: json['is_social_program'] ?? false,
     );
   }
 }

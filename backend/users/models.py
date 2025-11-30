@@ -21,7 +21,7 @@ class Client(models.Model):
     password_hash = models.CharField(max_length=255, verbose_name="Хеш пароля")
     name = models.CharField(max_length=255, verbose_name="ПІБ")
     phone = models.CharField(max_length=20, verbose_name="Телефон")
-
+    bonus_points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Бонусні бали")
     client_type = models.ForeignKey(ClientType, on_delete=models.SET_NULL, null=True, verbose_name="Тип клієнта")
     roles = models.ManyToManyField(Role, verbose_name="Ролі")
 
@@ -31,9 +31,9 @@ class Client(models.Model):
 
 class Prescription(models.Model):
     issue_date = models.DateField(verbose_name="Дата видачі")
-    file_path = models.CharField(max_length=500, verbose_name="Шлях до файлу")  # Спрощено для початку
-
+    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, verbose_name="Ліки", null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='prescriptions', verbose_name="Клієнт")
 
     def __str__(self):
-        return f"Рецепт від {self.issue_date}"
+        product_name = self.product.name if self.product else "Невідомі ліки"
+        return f"Рецепт на {product_name} для {self.client.name}"

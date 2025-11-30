@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../services/cart_service.dart';
+import '../services/auth_service.dart';
 import '../widgets/checkout_dialog.dart';
 
 class CartScreen extends StatefulWidget {
@@ -12,9 +13,15 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final CartService cartService = CartService();
+  final AuthService authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
+    double total = cartService.totalAmount;
+    double discountPercent = authService.currentDiscountPercent;
+    double discountAmount = total * discountPercent;
+    double finalPrice = total - discountAmount;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Ваш Кошик", style: TextStyle(color: kTextColor, fontWeight: FontWeight.bold)),
@@ -131,6 +138,7 @@ class _CartScreenState extends State<CartScreen> {
               },
             ),
           ),
+
           Container(
             padding: const EdgeInsets.all(kDefaultPadding),
             decoration: BoxDecoration(
@@ -144,13 +152,32 @@ class _CartScreenState extends State<CartScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (discountAmount > 0) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Сума:", style: TextStyle(color: kTextLightColor)),
+                        Text("${total.toStringAsFixed(2)} ₴", style: const TextStyle(decoration: TextDecoration.lineThrough, color: Colors.grey)),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Ваша знижка (${(discountPercent * 100).toInt()}%):", style: const TextStyle(color: kPrimaryColor)),
+                        Text("-${discountAmount.toStringAsFixed(2)} ₴", style: const TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const Divider(height: 20),
+                  ],
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Всього:", style: TextStyle(fontSize: 16, color: kTextLightColor)),
+                      const Text("До сплати:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       Text(
-                        "${cartService.totalAmount.toStringAsFixed(2)} ₴",
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kTextColor),
+                        "${finalPrice.toStringAsFixed(2)} ₴",
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: kTextColor),
                       ),
                     ],
                   ),
