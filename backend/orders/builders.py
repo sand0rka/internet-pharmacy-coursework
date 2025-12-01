@@ -1,6 +1,9 @@
-from django.db import transaction
-from django.core.exceptions import ValidationError
 from decimal import Decimal
+
+from django.core.exceptions import ValidationError
+from django.db import transaction
+
+from users.models import Prescription
 from .models import Order, OrderItem
 
 
@@ -11,7 +14,7 @@ class OrderBuilder:
         self._delivery_type = 'pickup'
         self._address = None
         self._items = []
-        self._use_bonuses = False  
+        self._use_bonuses = False
 
     def set_client(self, client):
         self._client = client
@@ -46,6 +49,17 @@ class OrderBuilder:
         if not self._items:
             raise ValidationError("Замовлення не може бути пустим!")
 
+        for item in self._items:
+            product = item['product']
+            if product.is_prescription:
+                has_rx = Prescription.objects.filter(
+                    client=self._client,
+                    product=product
+                ).exists()
+
+                if not has_rx:
+                    raise ValidationError(f"Товар '{product.name}' вимагає рецепту! Зверніться до лікаря.")
+
         with transaction.atomic():
             order = Order.objects.create(
                 client=self._client,
@@ -63,7 +77,10 @@ class OrderBuilder:
                 price = item['price']
 
                 OrderItem.objects.create(
-                    order=order, product=product, quantity=qty, price_per_unit=price
+                    order=order,
+                    product=product,
+                    quantity=qty,
+                    price_per_unit=price
                 )
 
                 product.stock_quantity -= qty
