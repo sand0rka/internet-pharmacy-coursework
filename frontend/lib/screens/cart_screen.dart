@@ -50,7 +50,7 @@ class _CartScreenState extends State<CartScreen> {
             Icon(Icons.shopping_basket_outlined, size: 100,
                 color: kPrimaryColor.withOpacity(0.2)),
             const SizedBox(height: 20),
-            const Text("Кошик порожній 😔",
+            const Text("Кошик порожній",
                 style: TextStyle(fontSize: 18, color: kTextLightColor)),
           ],
         ),

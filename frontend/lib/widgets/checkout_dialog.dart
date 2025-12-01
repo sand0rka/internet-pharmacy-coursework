@@ -19,6 +19,7 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
   final TextEditingController addressController = TextEditingController();
   bool isLoading = false;
   bool isPharmaciesLoading = false;
+  bool useBonuses = false;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
       deliveryAddress: deliveryType == 'courier'
           ? addressController.text
           : null,
+      useBonuses: useBonuses,
     );
 
     if (errorMessage == null) {
@@ -79,8 +81,7 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
               ],
             ),
             backgroundColor: Colors.red,
-            duration: const Duration(
-                seconds: 4),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -89,6 +90,9 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService().currentUser;
+    final double userBonuses = user?.bonusPoints ?? 0.0;
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: const Text("Оформлення замовлення"),
@@ -97,6 +101,40 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (userBonuses > 0) ...[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.orange.shade200)
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.monetization_on, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        Text("У вас є ${userBonuses.toStringAsFixed(
+                            2)} бонусів",
+                            style: const TextStyle(fontWeight: FontWeight
+                                .bold)),
+                      ],
+                    ),
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text("Списати бонуси?"),
+                      value: useBonuses,
+                      activeColor: kPrimaryColor,
+                      onChanged: (val) => setState(() => useBonuses = val),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+
             const Text("Спосіб доставки:",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             RadioListTile<String>(

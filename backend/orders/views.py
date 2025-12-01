@@ -23,12 +23,14 @@ class OrderViewSet(viewsets.ModelViewSet):
             delivery_type = data.get('delivery_type', 'pickup')
             pharmacy_id = data.get('pharmacy')
             address = data.get('delivery_address')
+            use_bonuses = data.get('use_bonuses', False)
             items_data = data.get('items', [])
 
             builder = OrderBuilder()
 
             client = get_object_or_404(Client, pk=client_id)
             builder.set_client(client)
+            builder.use_bonuses(use_bonuses)
 
             pharmacy = None
             if pharmacy_id:

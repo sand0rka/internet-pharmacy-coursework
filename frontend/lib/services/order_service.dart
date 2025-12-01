@@ -9,6 +9,7 @@ class OrderService {
     required String deliveryType,
     int? pharmacyId,
     String? deliveryAddress,
+    bool useBonuses = false,
   }) async {
     final user = AuthService().currentUser;
     final cartItems = CartService().items;
@@ -26,6 +27,7 @@ class OrderService {
     final Map<String, dynamic> orderData = {
       "client": user.id,
       "delivery_type": deliveryType,
+      "use_bonuses": useBonuses,
       "items": itemsJson,
     };
 
